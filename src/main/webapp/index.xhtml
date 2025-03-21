@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:c="http://java.sun.com/jsp/jstl/core">
+<h:head>
+    <title>Inscription Employé</title>
+    <style>
+        /* Style général */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        /* Style du formulaire */
+        .form-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .form-container h2 {
+            margin-top: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .form-grid h:outputLabel {
+            font-weight: bold;
+        }
+
+        .form-grid h:inputText, .form-grid h:selectOneMenu {
+            width: 100%;
+            padding: 5px;
+        }
+
+        .form-grid h:commandButton {
+            grid-column: span 2;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-grid h:commandButton:hover {
+            background-color: #218838;
+        }
+
+        /* Style du tableau */
+        .table-container {
+            margin-top: 20px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, .data-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-buttons h:commandButton, .action-buttons h:link {
+            padding: 5px 10px;
+            border-radius: 3px;
+            text-decoration: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .action-buttons h:commandButton {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .action-buttons h:commandButton:hover {
+            background-color: #c82333;
+        }
+
+        .action-buttons h:link {
+            background-color: #007bff;
+        }
+
+        .action-buttons h:link:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</h:head>
+<h:body>
+    <h1>Inscription Employé</h1>
+
+    <!-- Formulaire d'ajout d'employé -->
+    <div class="form-container">
+        <h2>Ajouter un employé</h2>
+        <h:form>
+            <div class="form-grid">
+                <!-- Champ pour le nom -->
+                <h:outputLabel for="name" value="Nom: " />
+                <h:inputText id="name" value="#{employeeBean.employee.name}" required="true" />
+
+                <!-- Champ pour l'email -->
+                <h:outputLabel for="email" value="Email: " />
+                <h:inputText id="email" value="#{employeeBean.employee.email}" required="true" />
+
+                <!-- Champ pour les compétences -->
+                <h:outputLabel for="skills" value="Compétences (séparées par des virgules): " />
+                <h:inputText id="skills" value="#{employeeBean.skillsString}" required="true" />
+
+                <!-- Menu déroulant pour le poste -->
+                <h:outputLabel for="post" value="Poste: " />
+                <h:selectOneMenu id="post" value="#{employeeBean.employee.post}" required="true">
+                    <f:selectItems value="#{employeeBean.posts}" />
+                </h:selectOneMenu>
+
+                <!-- Bouton pour ajouter un employé -->
+                <h:commandButton value="S'inscrire" action="#{employeeBean.addEmployee}" />
+            </div>
+        </h:form>
+    </div>
+
+    <!-- Liste des employés -->
+    <div class="table-container">
+        <h2>Liste des Employés</h2>
+        <h:form>
+            <h:dataTable value="#{employeeBean.employees}" var="emp" styleClass="data-table">
+                <!-- Colonne pour le nom -->
+                <h:column>
+                    <f:facet name="header">Nom</f:facet>
+                    #{emp.name}
+                </h:column>
+
+                <!-- Colonne pour l'email -->
+                <h:column>
+                    <f:facet name="header">Email</f:facet>
+                    #{emp.email}
+                </h:column>
+
+                <!-- Colonne pour les compétences -->
+                <h:column>
+                    <f:facet name="header">Compétences</f:facet>
+                    #{employeeBean.getEmployeeSkills(emp.id)}
+                </h:column>
+
+                <!-- Colonne pour le poste -->
+                <h:column>
+                    <f:facet name="header">Poste</f:facet>
+                    #{emp.post}
+                </h:column>
+
+                <!-- Colonne pour le projet -->
+                <h:column>
+                    <f:facet name="header">Projet</f:facet>
+                    #{emp.implication}
+
+                </h:column>
+
+                <!-- Colonne pour les actions -->
+                <h:column>
+                    <f:facet name="header">Actions</f:facet>
+                    <div class="action-buttons">
+                        <!-- Bouton pour supprimer un employé -->
+                        <h:commandButton value="Supprimer" action="#{employeeBean.deleteEmployee(emp.id)}">
+                            <f:ajax execute="@this" render="@form" />
+                        </h:commandButton>
+                        <!-- Lien pour affecter un employé à un projet -->
+                        <h:link outcome="affecter.xhtml">
+                            <f:param name="employeeId" value="#{emp.id}" />
+                            <h:outputText value="Affecter" />
+                        </h:link>
+                    </div>
+                </h:column>
+            </h:dataTable>
+        </h:form>
+    </div>
+</h:body>
+</html>

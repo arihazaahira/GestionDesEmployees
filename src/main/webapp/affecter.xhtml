@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<h:head>
+    <title>Affecter un employé</title>
+</h:head>
+<h:body>
+    <h2>Affecter un employé</h2>
+
+    <f:metadata>
+        <f:viewParam name="employeeId" value="#{affecteEmployeeBean.employeeId}"/>
+        <f:viewAction action="#{affecteEmployeeBean.loadEmployee}"/>
+    </f:metadata>
+
+    <h:form>
+        <h:panelGrid columns="2">
+            <h:outputLabel value="Nom de l'employé:"/>
+            <h:outputText value="#{affecteEmployeeBean.employee.name}"/>
+
+            <h:outputLabel value="Projet:"/>
+            <h:selectOneMenu value="#{affecteEmployeeBean.selectedProjectId}">
+                <f:selectItems value="#{affecteEmployeeBean.projects}" var="project" itemValue="#{project.id}" itemLabel="#{project.name}"/>
+            </h:selectOneMenu>
+
+            <h:outputLabel value="Implication (%):"/>
+            <h:inputText value="#{affecteEmployeeBean.implicationPercentage}"/>
+
+            <h:commandButton value="Affecter projet" action="#{affecteEmployeeBean.affectProject}"/>
+        </h:panelGrid>
+    </h:form>
+
+    <h:link outcome="index.xhtml" value="Retour à la liste des employés"/>
+</h:body>
+</html>
